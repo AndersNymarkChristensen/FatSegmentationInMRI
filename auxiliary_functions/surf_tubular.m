@@ -1,0 +1,37 @@
+function surf_tubular(S)
+
+if ~iscell(S)&& min(size(S)) == 1
+    disp('Input must be 3D')
+    return
+end
+
+if iscell(S)
+    K = zeros(1,numel(S));
+    for c = 1:numel(S)
+        K(c) = size(S{c},4);
+    end
+else
+    K = size(S,4); % may also be 1;
+end
+col = jet(sum(K(:))); % a unique color for each cut
+
+alpha = 0.6;
+
+hold on, axis vis3d off
+view(3), camlight('right')
+lighting phong, material shiny
+
+
+for c = 1:numel(K)
+    if iscell(S)
+        Sc = S{c};
+    else
+        Sc = S;
+    end
+    for k = 1:K(c)
+        Sk = Sc(:,:,:,k);
+        surf(Sk([1:end,1],:,1),Sk([1:end,1],:,2),Sk([1:end,1],:,3),...
+            'EdgeColor','none','FaceColor',col(sum(K(1:c-1))+k,:),...
+            'FaceAlpha',alpha)
+    end
+end
